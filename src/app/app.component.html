@@ -1,0 +1,28 @@
+<header>
+  <nav>
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{model}}
+      </button>
+      <ul class="dropdown-menu">
+        <li *ngFor="let m of models" [value]="m.name" (click)="model = m.name" class="dropdown-item">
+          <a>{{m.name}} {{m.size / 1024 / 1024 / 1024 | number: '1.0-2'}} GB</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<main class="justify-content-around flex-column d-flex h-100 w-100 mh-100 mw-100">
+  <div style="padding-top: 20px" class="flex-column d-flex h-75 w-100 mh-75 mw-100 overflow-y-auto overflow-x-hidden">
+    <ng-container *ngFor="let block of blocks">
+      <app-chat-bubble [type]="block.type" [content]="block.content" [source]="block.source"></app-chat-bubble>
+    </ng-container>
+  </div>
+  <form style="display: flex; flex-direction: row; padding-left: 10px; padding-bottom: 10px; justify-content: center" class="mh-25 h-25 w-100 mw-100" (ngSubmit)="ask()">
+    <div style="display: flex; flex-direction: row" class="input-group">
+        <textarea [(ngModel)]="question" class="form-control" aria-label="With textarea" name="question" (keypress)="onKey($event)"></textarea>
+        <button type="button" style="height: 3vh; width: 4vw" class="btn btn-outline-secondary" (click)="ask()">Ask</button>
+    </div>
+  </form>
+</main>
