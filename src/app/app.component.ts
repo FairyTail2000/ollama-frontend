@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   question: string = "";
   answer: string = "";
 
+  context: number[] = [];
 
   constructor(private ollamaClient: OllamaClientService) {
   }
@@ -43,11 +44,14 @@ export class AppComponent implements OnInit {
       content: "",
       source: this.model!
     });
-    this.ollamaClient.askQuestion(this.model!, this.question).subscribe((response) => {
+    this.ollamaClient.askQuestion(this.model!, this.question, this.context).subscribe((response) => {
       this.blocks[this.blocks.length - 1].content = "";
       for (const r of response) {
         if ("response" in r) {
           this.blocks[this.blocks.length - 1].content += r.response;
+        }
+        if ("context" in r) {
+          this.context = r.context;
         }
       }
     });

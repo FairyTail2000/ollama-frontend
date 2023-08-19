@@ -1,6 +1,6 @@
-<header>
-  <nav>
-    <div class="dropdown">
+<header style="height: 10%; max-height: 10%">
+  <nav class="d-flex w-100 mw-100 h-100 mh-100 align-items-center justify-content-between">
+    <div class="dropdown" style="width: 33.3%;">
       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         {{model}}
       </button>
@@ -10,11 +10,16 @@
         </li>
       </ul>
     </div>
+    <div style="width: 33.3%;" class="d-flex justify-content-center">
+      Ollama Client
+    </div>
+    <div style="width: 33.3%;">
+    </div>
   </nav>
 </header>
 
-<main class="justify-content-around flex-column d-flex h-100 w-100 mh-100 mw-100">
-  <div style="padding-top: 20px" class="flex-column d-flex h-75 w-100 mh-75 mw-100 overflow-y-auto overflow-x-hidden">
+<main class="justify-content-around flex-column d-flex w-100 mw-100" style="height: 90%; max-height: 90%">
+  <div style="padding-top: 20px" class="flex-column d-flex h-100 w-100 mh-100 mw-100 overflow-y-auto overflow-x-hidden">
     <ng-container *ngFor="let block of blocks">
       <app-chat-bubble [type]="block.type" [content]="block.content" [source]="block.source"></app-chat-bubble>
     </ng-container>
@@ -22,7 +27,7 @@
   <form style="display: flex; flex-direction: row; padding-left: 10px; padding-bottom: 10px; justify-content: center" class="mh-25 h-25 w-100 mw-100" (ngSubmit)="ask()">
     <div style="display: flex; flex-direction: row" class="input-group">
         <textarea [(ngModel)]="question" class="form-control" aria-label="With textarea" name="question" (keypress)="onKey($event)"></textarea>
-        <button type="button" style="height: 3vh; width: 4vw" class="btn btn-outline-secondary" (click)="ask()">Ask</button>
+        <button type="button" style="height: 100%; width: 4vw" class="btn btn-outline-secondary" (click)="ask()">Ask</button>
     </div>
   </form>
 </main>
