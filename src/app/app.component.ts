@@ -13,11 +13,10 @@ import { ChatBubbleComponent } from "../chat-bubble/chat-bubble.component";
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-
   models: ModelTag[] = [];
   blocks: { type: "question" | "answer"; content: string; source: string}[] = [];
   question: string = "";
-  system?: string;
+  _system?: string;
   answer: string = "";
 
   context: number[] = [];
@@ -33,6 +32,14 @@ export class AppComponent implements OnInit {
     return this._model;
   }
 
+  get system(): string {
+    return <string>this._system;
+  }
+
+  set system(value: string) {
+    this._system = value;
+    localStorage.setItem("system", value);
+  }
 
   constructor(private ollamaClient: OllamaClientService) {
   }
@@ -41,12 +48,13 @@ export class AppComponent implements OnInit {
     const {models} = await this.ollamaClient.getModels();
     this.models = models;
     this.model = localStorage.getItem("model");
+    this.system = localStorage.getItem("system") || "";
   }
 
 
   ask() {
-    if (this.system !== undefined && this.system.trim().length === 0) {
-      this.system = undefined;
+    if (this._system !== undefined && this._system.trim().length === 0) {
+      this._system = undefined;
     }
 
     localStorage.setItem("model", this.model!);
@@ -60,7 +68,7 @@ export class AppComponent implements OnInit {
       content: "",
       source: this.model!
     });
-    this.ollamaClient.askQuestion(this.model!, this.question, this.context, this.system).subscribe((response) => {
+    this.ollamaClient.askQuestion(this.model!, this.question, this.context, this._system).subscribe((response) => {
       this.blocks[this.blocks.length - 1].content = "";
       for (const r of response) {
         if ("response" in r) {
