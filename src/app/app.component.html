@@ -24,7 +24,7 @@
       <app-chat-bubble [type]="block.type" [content]="block.content" [source]="block.source"></app-chat-bubble>
     </ng-container>
   </div>
-  <form style="display: flex; flex-direction: row; padding-left: 10px; padding-bottom: 10px; justify-content: center" class="mh-25 h-25 w-100 mw-100" (ngSubmit)="ask()">
+  <form style="display: flex; flex-direction: row; padding-left: 10px; padding-bottom: 10px; padding-right: 10px; justify-content: center" class="mh-25 h-25 w-100 mw-100" (ngSubmit)="ask()">
     <div style="display: flex; flex-direction: row" class="input-group">
       <textarea [(ngModel)]="question" class="form-control" aria-label="Prompt" name="question" (keypress)="onKey($event)" placeholder="Prompt"></textarea>
       <textarea [(ngModel)]="system" class="form-control" aria-label="System Prompt" name="system" placeholder="System Prompt"></textarea>
