@@ -15,12 +15,24 @@ import { ChatBubbleComponent } from "../chat-bubble/chat-bubble.component";
 export class AppComponent implements OnInit {
 
   models: ModelTag[] = [];
-  model: string | null = null;
   blocks: { type: "question" | "answer"; content: string; source: string}[] = [];
   question: string = "";
+  system?: string;
   answer: string = "";
 
   context: number[] = [];
+  private _model: string | null = null;
+
+  set model(value: string | null) {
+    this._model = value;
+    this.context = [];
+    this.blocks = [];
+  }
+
+  get model() {
+    return this._model;
+  }
+
 
   constructor(private ollamaClient: OllamaClientService) {
   }
@@ -33,6 +45,10 @@ export class AppComponent implements OnInit {
 
 
   ask() {
+    if (this.system !== undefined && this.system.trim().length === 0) {
+      this.system = undefined;
+    }
+
     localStorage.setItem("model", this.model!);
     this.blocks.push({
       type: "question",
@@ -44,7 +60,7 @@ export class AppComponent implements OnInit {
       content: "",
       source: this.model!
     });
-    this.ollamaClient.askQuestion(this.model!, this.question, this.context).subscribe((response) => {
+    this.ollamaClient.askQuestion(this.model!, this.question, this.context, this.system).subscribe((response) => {
       this.blocks[this.blocks.length - 1].content = "";
       for (const r of response) {
         if ("response" in r) {

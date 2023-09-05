@@ -39,6 +39,9 @@ export class ChatBubbleComponent {
         }
       }
     }
+    if (markdown) {
+      this.content_parts.push({markdown: true, content: markdown_content, language: language})
+    }
   }
 
   content_parts?: {markdown: boolean; content: string; language?: string}[];
