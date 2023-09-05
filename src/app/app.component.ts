@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
     this._model = value;
     this.context = [];
     this.blocks = [];
+    localStorage.setItem("model", this.model!);
   }
 
   get model() {
@@ -57,7 +58,6 @@ export class AppComponent implements OnInit {
       this._system = undefined;
     }
 
-    localStorage.setItem("model", this.model!);
     this.blocks.push({
       type: "question",
       content: this.question,
