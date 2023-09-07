@@ -1,0 +1,9 @@
+node_modules
+.idea
+dist
+.vscode
+.editorconfig
+LICENSE
+.gitignore
+tsconfig.spec.json
+README.md
