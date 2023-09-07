@@ -1,4 +1,4 @@
-<div *ngFor="let part of content_parts">
+<div *ngFor="let part of content_parts" [style]="{'white-space': !part.markdown ? 'pre-wrap' : 'undefined'}">
   <ng-container *ngIf="!part.markdown">{{part.content}}</ng-container>
   <markdown [data]="part.content | language : String(part.language)" *ngIf="part.markdown" lineNumbers emoji clipboard></markdown>
 </div>

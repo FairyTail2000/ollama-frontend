@@ -44,6 +44,11 @@ export class OllamaClientService {
     return await firstValueFrom(this.http.get<ModelTagListResponse>('http://127.0.0.1:11434/api/tags', {responseType: "json"}));
   }
 
+  async getModelInfo(model: ModelTag) {
+    return await firstValueFrom(this.http.post<any>('http://127.0.0.1:11434/api/show', {name: model.name}, {responseType: "json"}));
+
+  }
+
   askQuestion(model: string, prompt: string, context: number[] = [], system?: string): Observable<(QuestionResponse | QuestionResponseEnd)[]> {
     return this.http.post('http://127.0.0.1:11434/api/generate',
       {model, prompt, context, system},
