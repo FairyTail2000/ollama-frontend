@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {nanoid} from "nanoid";
+import { nanoid } from "nanoid";
 
 export interface Message {
   type: "question" | "answer";
