@@ -1,9 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModelTag, OllamaClientService } from "./ollama-client.service";
+import { ModelTag, OllamaClientService } from "../../services/ollama-client.service";
 import { FormsModule } from "@angular/forms";
 import { ChatBubbleComponent } from "../chat-bubble/chat-bubble.component";
-import { Chat, ChatService } from "./chat.service";
+import { Chat, ChatService } from "../../services/chat.service";
 
 
 @Component({
