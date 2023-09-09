@@ -1,6 +1,7 @@
 import { ApplicationConfig, SecurityContext } from '@angular/core';
 import { provideHttpClient } from "@angular/common/http";
 import { MarkdownService, SECURITY_CONTEXT } from "ngx-markdown";
+import {API_URL} from "./ollama-client.service";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -9,6 +10,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: SECURITY_CONTEXT,
       useValue: SecurityContext.NONE
+    },
+    {
+      provide: API_URL,
+      useValue: "http://127.0.0.1:11434/api"
     }
   ]
 };
