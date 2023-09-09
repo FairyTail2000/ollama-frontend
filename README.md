@@ -27,3 +27,21 @@ If you have ollama and running you can click on the displayed link or type it in
 
 
 Right now this client only has chat capabilities for any other operations like pulling models you have to use the command line. You can find more info in the repo of ollama
+
+---
+
+In case of docker the procedure is different as demonstrated now. We are still in the terminal in the folder containing this project.
+
+First we need to build the image. This can be done with the following command:
+
+```shell
+docker build -t ollama-client .
+```
+
+In order to use the image we need to run it. This can be done with the following command:
+
+```shell
+docker run --rm --net host ollama-client
+```
+
+The --host is required to allow the container to access the host network. This is required to allow the client to connect to the ollama server.
