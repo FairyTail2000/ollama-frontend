@@ -19,8 +19,8 @@
 </header>
 
 <main class="justify-content-around flex-column d-flex w-100 mw-100" style="height: 90%; max-height: 90%">
-  <div style="padding-top: 20px; padding-bottom: 20px" class="flex-column d-flex h-100 w-100 mh-100 mw-100 overflow-y-auto overflow-x-hidden">
-    <ng-container *ngFor="let block of blocks">
+  <div style="padding-top: 20px; padding-bottom: 20px" class="flex-column d-flex h-100 w-100 mh-100 mw-100 overflow-y-auto overflow-x-hidden" #chatcontainer>
+    <ng-container *ngFor="let block of currentChat?.messages">
       <app-chat-bubble [type]="block.type" [content]="block.content" [source]="block.source"></app-chat-bubble>
     </ng-container>
   </div>

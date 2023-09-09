@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModelTag, OllamaClientService } from "./ollama-client.service";
 import { FormsModule } from "@angular/forms";
 import { ChatBubbleComponent } from "../chat-bubble/chat-bubble.component";
+import { Chat, ChatService } from "./chat.service";
 
 
 @Component({
@@ -14,18 +15,23 @@ import { ChatBubbleComponent } from "../chat-bubble/chat-bubble.component";
 })
 export class AppComponent implements OnInit {
   models: ModelTag[] = [];
-  blocks: { type: "question" | "answer"; content: string; source: string}[] = [];
   question: string = "";
   _system?: string;
   answer: string = "";
 
-  context: number[] = [];
+  chats: Chat[] = [];
+  _currentChat: Chat | null = null;
+
   private _model: string | null = null;
 
+  @ViewChild('chatcontainer', {static: true}) chatcontainer: ElementRef<HTMLDivElement> | undefined;
+
   set model(value: string | null) {
+    if (this.currentChat) {
+      this.chatService.saveChat(this.currentChat!);
+    }
+    this.currentChat = this.chatService.defaultChat(value!);
     this._model = value;
-    this.context = [];
-    this.blocks = [];
     localStorage.setItem("model", this.model!);
   }
 
@@ -34,15 +40,27 @@ export class AppComponent implements OnInit {
   }
 
   get system(): string {
-    return <string>this._system;
+    return this.currentChat?.system!;
   }
 
   set system(value: string) {
-    this._system = value;
-    localStorage.setItem("system", value);
+    this.currentChat!.system = value;
+    this.chatService.saveChat(this.currentChat!);
   }
 
-  constructor(private ollamaClient: OllamaClientService) {
+  get currentChat(): Chat | null {
+    return this._currentChat;
+  }
+
+  set currentChat(value: Chat | null) {
+    if (this._currentChat !== null) {
+      this.chatService.saveChat(this.currentChat!);
+    }
+    this._currentChat = value;
+  }
+
+
+  constructor(private ollamaClient: OllamaClientService, private chatService: ChatService) {
   }
 
   async ngOnInit() {
@@ -50,6 +68,8 @@ export class AppComponent implements OnInit {
     this.models = models;
     this.model = localStorage.getItem("model");
     this.system = localStorage.getItem("system") || "";
+    this.chats = this.chatService.loadChats();
+    this.currentChat = this.chats[0] || this.chatService.defaultChat(this.model ?? undefined);
   }
 
 
@@ -58,25 +78,31 @@ export class AppComponent implements OnInit {
       this._system = undefined;
     }
 
-    this.blocks.push({
+    if (this.model === null) {
+      return;
+    }
+
+    this.currentChat!.messages.push({
       type: "question",
       content: this.question,
       source: "You"
     });
-    this.blocks.push({
+    this.currentChat!.messages.push({
       type: "answer",
       content: "",
       source: this.model!
     });
-    this.ollamaClient.askQuestion(this.model!, this.question, this.context, this._system).subscribe((response) => {
-      this.blocks[this.blocks.length - 1].content = "";
+    this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this._system).subscribe((response) => {
+      this.currentChat!.messages[this.currentChat!.messages.length - 1].content = "";
       for (const r of response) {
         if ("response" in r) {
-          this.blocks[this.blocks.length - 1].content += r.response;
+          this.currentChat!.messages[this.currentChat!.messages.length - 1].content += r.response;
         }
         if ("context" in r) {
-          this.context = r.context;
+          this.currentChat!.context = r.context;
+          this.chatService.saveChat(this.currentChat!);
         }
+        this.chatcontainer?.nativeElement.scrollTo(0, this.chatcontainer.nativeElement.scrollHeight);
       }
     });
     this.question = "";
