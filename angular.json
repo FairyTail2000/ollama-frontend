@@ -59,7 +59,7 @@
               "src/styles.css",
               "src/assets/bootstrap/css/bootstrap.css",
               "node_modules/prismjs/themes/prism-okaidia.css",
-              "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css",
+              "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css"
             ],
             "scripts": [
               "src/assets/bootstrap/js/bootstrap.bundle.js",
