@@ -69,4 +69,9 @@ export class OllamaClientService {
       })
     );
   }
+
+  generateEmbeddings(model: string, prompt: string): Observable<any> {
+    return this.http.post(`${this.api_url}/embeddings`, {model, prompt},  {responseType: 'json'}
+    )
+  }
 }
