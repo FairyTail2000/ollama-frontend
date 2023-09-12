@@ -45,3 +45,9 @@ docker run --rm --net host ollama-client
 ```
 
 The --host is required to allow the container to access the host network. This is required to allow the client to connect to the ollama server.
+
+---
+
+It might be the best to lauch ollama with the environment variable OLLAMA_HOST set to 0.0.0.0
+
+This will ensure that ollama communication works as expected
