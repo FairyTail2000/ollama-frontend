@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
     if (this.currentChat) {
       this.chatService.saveChat(this.currentChat!);
     }
-    this.currentChat = this.chatService.defaultChat(value!);
+    this.currentChat = this.chats.find((c) => c.model === value) ?? this.chatService.defaultChat(value!);
     this._model = value;
     localStorage.setItem("model", this.model!);
   }
@@ -112,5 +112,12 @@ export class AppComponent implements OnInit {
     if ((e.ctrlKey || e.metaKey) && (e.keyCode == 13 || e.keyCode == 10)) {
       this.ask()
     }
+  }
+
+  deleteCurrentChat() {
+    const id = structuredClone(this.currentChat!);
+    this.chats = this.chats.filter((c) => c.id !== this.currentChat!.id);
+    this.currentChat = this.chatService.defaultChat(this.model ?? undefined);
+    this.chatService.deleteChat(id);
   }
 }

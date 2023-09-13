@@ -80,4 +80,8 @@ export class ChatService {
       model: model ?? "",
     }
   }
+
+  deleteChat(chat: Chat) {
+    localStorage.removeItem(chat.id!);
+  }
 }
