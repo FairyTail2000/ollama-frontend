@@ -74,10 +74,6 @@ export class AppComponent implements OnInit {
 
 
   ask() {
-    if (this._system !== undefined && this._system.trim().length === 0) {
-      this._system = undefined;
-    }
-
     if (this.model === null) {
       return;
     }
@@ -92,7 +88,8 @@ export class AppComponent implements OnInit {
       content: "",
       source: this.model!
     });
-    this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this._system).subscribe((response) => {
+    console.log(this.system)
+    this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this.system).subscribe((response) => {
       this.currentChat!.messages[this.currentChat!.messages.length - 1].content = "";
       for (const r of response) {
         if ("response" in r) {

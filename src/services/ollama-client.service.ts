@@ -57,7 +57,7 @@ export class OllamaClientService {
 
   askQuestion(model: string, prompt: string, context: number[] = [], system?: string): Observable<(QuestionResponse | QuestionResponseEnd)[]> {
     return this.http.post(`${this.api_url}/generate`,
-      {model, prompt, context, system},
+      {model, prompt, context, system: system?.trim().length !== 0 ? system : undefined},
       {observe: 'events', responseType: 'text', reportProgress: true}
     ).pipe(
       // @ts-ignore
