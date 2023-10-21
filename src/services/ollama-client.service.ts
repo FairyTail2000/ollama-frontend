@@ -33,6 +33,18 @@ export interface QuestionResponseEnd {
   total_duration: number
 }
 
+export interface ShowModelResponse {
+  license: string
+  modelfile: string
+  parameters: string
+  template: string
+}
+
+export interface EmbeddingResponse {
+  embedding: number[]
+}
+
+
 export const API_URL = new InjectionToken<string>('API_URL')
 
 @Injectable({
@@ -52,7 +64,6 @@ export class OllamaClientService {
 
   async getModelInfo(model: ModelTag) {
     return await firstValueFrom(this.http.post<any>(`${this.api_url}/show`, {name: model.name}, {responseType: "json"}));
-
   }
 
   askQuestion(model: string, prompt: string, context: number[] = [], system?: string): Observable<(QuestionResponse | QuestionResponseEnd)[]> {
@@ -70,8 +81,30 @@ export class OllamaClientService {
     );
   }
 
-  generateEmbeddings(model: string, prompt: string): Observable<any> {
-    return this.http.post(`${this.api_url}/embeddings`, {model, prompt},  {responseType: 'json'}
-    )
+  generateEmbeddings(model: string, prompt: string) {
+    return this.http.post<EmbeddingResponse>(`${this.api_url}/embeddings`, {model, prompt},  {responseType: 'json'})
+  }
+
+  pullModel(model: string): Observable<any> {
+    return this.http.post(`${this.api_url}/pull`,
+      {name: model},
+      {observe: 'events', responseType: 'text', reportProgress: true}
+    ).pipe(
+      // @ts-ignore
+      filter(e => e.type === 3),
+      map(e => {
+        // @ts-ignore
+        const partials = e.partialText.trim().split('\n');
+        return partials.map((p: string) => JSON.parse(p));
+      })
+    );
+  }
+
+  showModel(model: string) {
+    return this.http.post<ShowModelResponse>(`${this.api_url}/show`, {name: model},  {responseType: 'json'})
+  }
+
+  copyModel(model: string, newModel: string) {
+    return this.http.post(`${this.api_url}/copy`, {source: model, destination: newModel},  {responseType: 'json'})
   }
 }
