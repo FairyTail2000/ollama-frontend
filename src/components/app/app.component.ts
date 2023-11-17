@@ -6,10 +6,11 @@ import { ChatBubbleComponent } from "../chat-bubble/chat-bubble.component";
 import { Chat, ChatService } from "../../services/chat.service";
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-main',
   standalone: true,
   imports: [CommonModule, FormsModule, ChatBubbleComponent, SidebarComponent],
   templateUrl: './app.component.html',
@@ -69,7 +70,7 @@ export class AppComponent implements OnInit {
     this._currentChat = value;
   }
 
-  constructor(private ollamaClient: OllamaClientService, private chatService: ChatService) {
+  constructor(private ollamaClient: OllamaClientService, private chatService: ChatService, private route: ActivatedRoute, private router: Router) {
   }
 
   async ngOnInit() {
@@ -78,9 +79,17 @@ export class AppComponent implements OnInit {
     this.model = localStorage.getItem("model");
     this.system = localStorage.getItem("system") || "";
     this.chats = this.chatService.loadChats();
-    this.currentChat = this.chats[0] || this.chatService.defaultChat(this.model ?? undefined);
-    this.chats[0] = this.currentChat;
-    this.chatcontainer?.nativeElement.scrollTo(0, this.chatcontainer.nativeElement.scrollHeight);
+    this.route.data.subscribe((data) => {
+      if (data['chat']) {
+        this.currentChat = data['chat'];
+      } else {
+        this.currentChat = this.chats[0] || this.chatService.defaultChat(this.model ?? undefined);
+        this.chats[0] = this.currentChat;
+      }
+      setTimeout(() => {
+        this.chatcontainer?.nativeElement.scrollTo(0, this.chatcontainer.nativeElement.scrollHeight);
+      })
+    });
   }
 
   ask() {
@@ -143,8 +152,7 @@ export class AppComponent implements OnInit {
   }
 
   sidebarClicked($event: string) {
-    const chat = this.chats.find((c) => c.id === $event);
-    this.currentChat = chat!;
+    this.router.navigate(["chats", $event]).catch((e) => console.error(e));
   }
 
   stop(id: string | undefined) {
