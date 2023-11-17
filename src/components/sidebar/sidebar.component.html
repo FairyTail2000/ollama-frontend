@@ -1,0 +1,5 @@
+<ul class="list-group">
+  <li [class]="['list-group-item', item.id === currentChatId ? 'active' : undefined]" *ngFor="let item of chats" [attr.aria-current]="item.id === currentChatId" (click)="clicked.emit(item.id)">
+    Conversation with {{ item.model }}
+  </li>
+</ul>

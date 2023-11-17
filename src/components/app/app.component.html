@@ -1,10 +1,27 @@
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true" #errorModal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="errorModalLabel">Error!</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {{ error }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <header style="height: 10%; max-height: 10%">
   <nav class="d-flex w-100 mw-100 h-100 mh-100 align-items-center justify-content-between">
     <div class="dropdown" style="width: 33.3%;">
       <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         {{model}}
       </button>
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu" id="dropdown">
         <li *ngFor="let m of models" [value]="m.name" (click)="model = m.name" class="dropdown-item">
           <a>{{m.name}} {{m.size / 1024 / 1024 / 1024 | number: '1.0-2'}} GB</a>
         </li>
@@ -19,17 +36,24 @@
   </nav>
 </header>
 
-<main class="justify-content-around flex-column d-flex w-100 mw-100" style="height: 90%; max-height: 90%">
-  <div style="padding-top: 20px; padding-bottom: 20px" class="flex-column d-flex h-100 w-100 mh-100 mw-100 overflow-y-auto overflow-x-hidden" #chatcontainer>
-    <ng-container *ngFor="let block of currentChat?.messages">
-      <app-chat-bubble [type]="block.type" [content]="block.content" [source]="block.source"></app-chat-bubble>
-    </ng-container>
-  </div>
-  <form style="display: flex; flex-direction: row; padding-left: 10px; padding-bottom: 10px; padding-right: 10px; justify-content: center" class="mh-25 h-25 w-100 mw-100" (ngSubmit)="ask()">
-    <div style="display: flex; flex-direction: row" class="input-group">
-      <textarea [(ngModel)]="question" class="form-control" aria-label="Prompt" name="question" (keypress)="onKey($event)" placeholder="Prompt"></textarea>
-      <textarea [(ngModel)]="system" class="form-control" aria-label="System Prompt" name="system" placeholder="System Prompt"></textarea>
-      <button type="button" style="height: 100%; width: 4vw" class="btn btn-outline-secondary" (click)="ask()">Ask</button>
+<div class="flex-row d-flex" style="height: 90%; max-height: 90%">
+  <nav class="w-25 border-end border-2">
+    <app-sidebar [chats]="chats" [currentChatId]="currentChat?.id" (clicked)="sidebarClicked($event)"/>
+  </nav>
+  <main class="justify-content-around flex-column d-flex w-75 mw-100" style="height: 100%; max-height: 100%">
+    <div style="padding-top: 20px; padding-bottom: 20px" class="flex-column d-flex h-100 w-100 mh-100 mw-100 overflow-y-auto overflow-x-hidden" #chatcontainer>
+      <ng-container *ngFor="let block of currentChat?.messages">
+        <app-chat-bubble [type]="block.type" [content]="block.content" [source]="block.source"></app-chat-bubble>
+      </ng-container>
     </div>
-  </form>
-</main>
+    <form style="display: flex; flex-direction: row; padding-left: 10px; padding-bottom: 10px; padding-right: 10px; justify-content: center" class="mh-25 h-25 w-100 mw-100" (ngSubmit)="ask()">
+      <div style="display: flex; flex-direction: row" class="input-group">
+        <textarea [(ngModel)]="question" class="form-control" aria-label="Prompt" name="question" (keypress)="onKey($event)" placeholder="Prompt"></textarea>
+        <textarea [(ngModel)]="system" class="form-control" aria-label="System Prompt" name="system" placeholder="System Prompt"></textarea>
+        <button type="button" style="height: 100%; width: 4vw" class="btn btn-outline-secondary" (click)="ask()">Ask</button>
+      </div>
+    </form>
+  </main>
+
+</div>
+
