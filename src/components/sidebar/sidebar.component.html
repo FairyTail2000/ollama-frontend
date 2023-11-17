@@ -1,5 +1,5 @@
-<ul class="list-group">
-  <li [class]="['list-group-item', item.id === currentChatId ? 'active' : undefined]" *ngFor="let item of chats" [attr.aria-current]="item.id === currentChatId" (click)="clicked.emit(item.id)">
+<ul class="list-group" aria-label="Existing chats" aria-description="List of chats with different models">
+  <li [class]="['list-group-item', item.id === currentChatId ? 'active' : '']" *ngFor="let item of chats" [attr.aria-current]="item.id === currentChatId" (click)="clicked.emit(item.id)" [attr.aria-description]="'Navigation Item to navigate to a conversation with ' + item.model" tabindex="0" (keyup.enter)="clicked.emit(item.id)" (keyup.space)="clicked.emit(item.id)">
     Conversation with {{ item.model }}
   </li>
 </ul>

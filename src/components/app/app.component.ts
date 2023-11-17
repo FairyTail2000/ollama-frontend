@@ -82,6 +82,7 @@ export class AppComponent implements OnInit {
     this.chats = this.chatService.loadChats();
     this.currentChat = this.chats[0] || this.chatService.defaultChat(this.model ?? undefined);
     this.chats[0] = this.currentChat;
+    this.chatcontainer?.nativeElement.scrollTo(0, this.chatcontainer.nativeElement.scrollHeight);
   }
 
   ask() {
@@ -97,7 +98,8 @@ export class AppComponent implements OnInit {
     this.currentChat!.messages.push({
       type: "answer",
       content: "",
-      source: this.model!
+      source: this.model!,
+      active: true
     });
     const sub = this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this.system).subscribe((response) => {
       this.generating = true;
@@ -115,8 +117,9 @@ export class AppComponent implements OnInit {
           }
           if ("context" in r) {
             this.currentChat!.context = r.context;
-            this.chatService.saveChat(this.currentChat!);
+            this.currentChat!.messages[this.currentChat!.messages.length - 1].active = false;
             this.generating = false;
+            this.chatService.saveChat(this.currentChat!);
           }
           this.chatcontainer?.nativeElement.scrollTo(0, this.chatcontainer.nativeElement.scrollHeight);
         }
@@ -135,7 +138,11 @@ export class AppComponent implements OnInit {
   deleteCurrentChat() {
     const id = structuredClone(this.currentChat!);
     this.chats = this.chats.filter((c) => c.id !== this.currentChat!.id);
-    this.currentChat = this.chatService.defaultChat(this.model ?? undefined);
+    if (this.chats.length > 0) {
+      this.currentChat = this.chats.at(-1)!;
+    } else {
+      this.currentChat = this.chatService.defaultChat(this.model ?? undefined);
+    }
     this.chatService.deleteChat(id);
   }
 

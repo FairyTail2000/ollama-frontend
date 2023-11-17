@@ -5,6 +5,7 @@ export interface Message {
   type: "question" | "answer";
   content: string;
   source: string
+  active?: boolean;
 }
 
 export interface Chat {
