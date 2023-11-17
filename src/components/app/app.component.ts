@@ -4,10 +4,8 @@ import { ModelTag, OllamaClientService } from "../../services/ollama-client.serv
 import { FormsModule } from "@angular/forms";
 import { ChatBubbleComponent } from "../chat-bubble/chat-bubble.component";
 import { Chat, ChatService } from "../../services/chat.service";
-import {SidebarComponent} from "../sidebar/sidebar.component";
+import { SidebarComponent } from "../sidebar/sidebar.component";
 import { Subscription } from 'rxjs';
-
-declare var bootstrap: any;
 
 
 @Component({
@@ -109,7 +107,7 @@ export class AppComponent implements OnInit {
       this.generating = true;
       if (Array.isArray(response) && "error" in response[0]) {
         this.error = response[0].error as string;
-        new bootstrap.Modal(this.modal?.nativeElement).show();
+        new bootstrap.Modal(this.modal?.nativeElement!).show();
         this.currentChat!.messages.pop();
         this.generating = false;
         this.chatService.saveChat(this.currentChat!);

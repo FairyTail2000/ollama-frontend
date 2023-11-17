@@ -33,7 +33,7 @@
     "@angular-devkit/build-angular": "^17.0.1",
     "@angular/cli": "~17.0.1",
     "@angular/compiler-cli": "^17.0.3",
-    "@types/marked": "^6.0.0",
+    "@types/bootstrap": "^5.2.9",
     "typescript": "5.2.2"
   }
 }
