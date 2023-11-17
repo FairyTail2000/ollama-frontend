@@ -1,6 +1,5 @@
 import {Alert, Button, Carousel, Collapse, Dropdown, Modal, Offcanvas, Popover, ScrollSpy, Tab, Toast, Tooltip} from "bootstrap";
 
-
 declare global {
   let bootstrap: {
     Alert: typeof Alert;
@@ -16,6 +15,4 @@ declare global {
     Toast: typeof Toast;
     Tooltip: typeof Tooltip;
   };
-
 }
-
