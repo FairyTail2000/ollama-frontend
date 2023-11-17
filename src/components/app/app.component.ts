@@ -90,6 +90,10 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    if (this.question.trim().length === 0) {
+      return;
+    }
+
     this.currentChat!.messages.push({
       type: "question",
       content: this.question,
@@ -127,12 +131,6 @@ export class AppComponent implements OnInit {
     });
     this.currentSubscriptions[this.currentChat!.id!] = sub;
     this.question = "";
-  }
-
-  onKey(e: KeyboardEvent) {
-    if ((e.ctrlKey || e.metaKey) && (e.keyCode == 13 || e.keyCode == 10)) {
-      this.ask()
-    }
   }
 
   deleteCurrentChat() {
