@@ -1,4 +1,4 @@
-import {Inject, Injectable, InjectionToken} from '@angular/core';
+import {Inject, Injectable, InjectionToken} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {filter, firstValueFrom, map, Observable} from "rxjs";
 
@@ -44,6 +44,41 @@ export interface EmbeddingResponse {
   embedding: number[]
 }
 
+export interface ModelOptions {
+  num_keep: number
+  seed: number
+  num_predict: number
+  top_k: number
+  top_p: number
+  tfs_z: number
+  typical_p: number
+  repeat_last_n: number
+  temperature: number
+  repeat_penalty: number
+  presence_penalty: number
+  frequency_penalty: number
+  mirostat: number
+  mirostat_tau: number
+  mirostat_eta: number
+  penalize_newline: boolean
+  stop: string[],
+  numa: boolean
+  num_ctx: number
+  num_batch: number
+  num_gqa: number
+  num_gpu: number
+  main_gpu: number
+  low_vram: boolean
+  f16_kv: boolean
+  logits_all: boolean
+  vocab_only: boolean
+  use_mmap:boolean
+  use_mlock: boolean
+  embedding_only: boolean
+  rope_frequency_base: number
+  rope_frequency_scale: number
+  num_thread: number
+}
 
 export const API_URL = new InjectionToken<string>('API_URL')
 
@@ -66,9 +101,9 @@ export class OllamaClientService {
     return await firstValueFrom(this.http.post<any>(`${this.api_url}/show`, {name: model.name}, {responseType: "json"}));
   }
 
-  askQuestion(model: string, prompt: string, context: number[] = [], system?: string): Observable<(QuestionResponse | QuestionResponseEnd)[]> {
+  askQuestion(model: string, prompt: string, context: number[] = [], system?: string, options?: ModelOptions): Observable<(QuestionResponse | QuestionResponseEnd)[]> {
     return this.http.post(`${this.api_url}/generate`,
-      {model, prompt, context, system: system?.trim().length !== 0 ? system : undefined},
+      {model, prompt, context, system: system?.trim().length !== 0 ? system : undefined, options},
       {observe: 'events', responseType: 'text', reportProgress: true}
     ).pipe(
       // @ts-ignore

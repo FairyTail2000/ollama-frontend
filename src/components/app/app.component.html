@@ -50,7 +50,8 @@
       <div style="display: flex; flex-direction: row" class="input-group">
         <textarea [(ngModel)]="question" class="form-control" aria-label="Prompt" name="question" (keypress)="onKey($event)" placeholder="Prompt"></textarea>
         <textarea [(ngModel)]="system" class="form-control" aria-label="System Prompt" name="system" placeholder="System Prompt"></textarea>
-        <button type="button" style="height: 100%; width: 4vw" class="btn btn-outline-secondary" (click)="ask()">Ask</button>
+        <button *ngIf="!generating" type="button" style="height: 100%; width: 4vw" class="btn btn-outline-secondary" (click)="ask()">Ask</button>
+        <button *ngIf="generating" type="button" style="height: 100%; width: 4vw" class="btn btn-outline-secondary" (click)="stop(currentChat?.id)">Stop</button>
       </div>
     </form>
   </main>

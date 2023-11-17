@@ -5,6 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { ChatBubbleComponent } from "../chat-bubble/chat-bubble.component";
 import { Chat, ChatService } from "../../services/chat.service";
 import {SidebarComponent} from "../sidebar/sidebar.component";
+import { Subscription } from 'rxjs';
 
 declare var bootstrap: any;
 
@@ -21,6 +22,8 @@ export class AppComponent implements OnInit {
   question: string = "";
   answer: string = "";
   error: string | null = null;
+  generating: boolean = false;
+  currentSubscriptions: {[key: string]: Subscription} = {};
 
   chats: Chat[] = [];
   _currentChat: Chat | null = null;
@@ -96,11 +99,13 @@ export class AppComponent implements OnInit {
       content: "",
       source: this.model!
     });
-    this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this.system).subscribe((response) => {
+    const sub = this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this.system).subscribe((response) => {
+      this.generating = true;
       if (Array.isArray(response) && "error" in response[0]) {
         this.error = response[0].error as string;
         new bootstrap.Modal(this.modal?.nativeElement).show();
         this.currentChat!.messages.pop();
+        this.generating = false;
         this.chatService.saveChat(this.currentChat!);
       } else {
         this.currentChat!.messages[this.currentChat!.messages.length - 1].content = "";
@@ -111,11 +116,13 @@ export class AppComponent implements OnInit {
           if ("context" in r) {
             this.currentChat!.context = r.context;
             this.chatService.saveChat(this.currentChat!);
+            this.generating = false;
           }
           this.chatcontainer?.nativeElement.scrollTo(0, this.chatcontainer.nativeElement.scrollHeight);
         }
       }
     });
+    this.currentSubscriptions[this.currentChat!.id!] = sub;
     this.question = "";
   }
 
@@ -135,5 +142,14 @@ export class AppComponent implements OnInit {
   sidebarClicked($event: string) {
     const chat = this.chats.find((c) => c.id === $event);
     this.currentChat = chat!;
+  }
+
+  stop(id: string | undefined) {
+    const sub = this.currentSubscriptions[id!];
+    if (!sub.closed) {
+      sub.unsubscribe();
+      this.generating = false;
+      this.chatService.saveChat(this.chats.find((c) => c.id === id!)!);
+    }
   }
 }
