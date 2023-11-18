@@ -7,12 +7,13 @@ import { Chat, ChatService } from "../../services/chat.service";
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HeaderComponent } from '../header/header.component';
 
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule, FormsModule, ChatBubbleComponent, SidebarComponent],
+  imports: [CommonModule, FormsModule, ChatBubbleComponent, SidebarComponent, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
@@ -68,6 +69,8 @@ export class AppComponent implements OnInit {
       this.chatService.saveChat(this.currentChat!);
     }
     this._currentChat = value;
+    this._model = value?.model ?? this.model;
+    localStorage.setItem("model", this.model!);
   }
 
   constructor(private ollamaClient: OllamaClientService, private chatService: ChatService, private route: ActivatedRoute, private router: Router) {
