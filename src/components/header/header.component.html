@@ -1,19 +1,28 @@
 <header class="w-100 mw-100 h-100 mh-100">
   <nav class="d-flex w-100 mw-100 h-100 mh-100 align-items-center justify-content-between">
-    <div class="dropdown" style="width: 33.3%;">
-      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" tabindex="0">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" tabindex="0" aria-label="Currently selected Model">
         {{model}}
       </button>
-      <ul class="dropdown-menu" id="dropdown">
+      <ul class="dropdown-menu" id="dropdown" aria-label="Model list">
         <li *ngFor="let m of models" [value]="m.name" (click)="modelChange.emit(m.name)" class="dropdown-item">
           <a>{{m.name}} {{m.size / 1024 / 1024 / 1024 | number: '1.0-2'}} GB</a>
         </li>
       </ul>
     </div>
-    <div style="width: 33.3%;" class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center">
       Ollama Client
     </div>
-    <button class="btn btn-warning d-flex justify-content-end" type="button" tabindex="0" (click)="deleteCurrentChat.emit()" (keyup.enter)="deleteCurrentChat.emit()" (keyup.space)="deleteCurrentChat.emit()" aria-label="Delete current chat" aria-description="Deletes the current chat without confirmation or ability to restore">
+
+    <button
+      class="btn btn-warning d-flex justify-content-end"
+      type="button"
+      tabindex="0"
+      (click)="deleteCurrentChat.emit()"
+      (keyup.enter)="deleteCurrentChat.emit()"
+      (keyup.space)="deleteCurrentChat.emit()"
+      aria-label="Delete current chat"
+      aria-description="Deletes the current chat without confirmation or ability to restore">
       delete
     </button>
   </nav>
