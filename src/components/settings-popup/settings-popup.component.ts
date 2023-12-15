@@ -36,6 +36,7 @@ export class SettingsPopupComponent implements OnInit, OnDestroy {
   _shown = false;
   sub?: Subscription;
   hostElement?: ElementRef;
+  _existingSettings?: {[key: string]: any} | null;
 
   @Input({required: true})
   set shown(value: boolean) {
@@ -53,8 +54,9 @@ export class SettingsPopupComponent implements OnInit, OnDestroy {
 
   @Input()
   set existingSettings(value: {[key: string]: any} | null | undefined) {
+    this._existingSettings = value;
     if (!value) {
-      this.chatSettingsGroup.reset();
+      this.chatSettingsGroup = this.default_settings();
       return;
     }
     if ("streaming" in value) {
@@ -71,28 +73,32 @@ export class SettingsPopupComponent implements OnInit, OnDestroy {
     }
   }
 
+  default_settings() {
+    return new FormGroup({
+      streaming: new FormControl(true),
+      options: new FormGroup({
+        top_k: new FormControl(MODEL_PARAMETERS[ModelParameter.top_k].default),
+        top_p: new FormControl(MODEL_PARAMETERS[ModelParameter.top_p].default, {validators: MODEL_PARAMETERS[ModelParameter.top_p].validator}),
+        temperature: new FormControl(MODEL_PARAMETERS[ModelParameter.temperature].default, {validators: MODEL_PARAMETERS[ModelParameter.temperature].validator}),
+        stop: new FormArray([new FormControl('')]),
+        num_predict: new FormControl(MODEL_PARAMETERS[ModelParameter.num_predict].default, {validators: MODEL_PARAMETERS[ModelParameter.num_predict].validator}),
+        num_ctx: new FormControl(MODEL_PARAMETERS[ModelParameter.num_ctx].default),
+        num_gqa: new FormControl(),
+        num_gpu: new FormControl(),
+        num_thread: new FormControl(),
+        repeat_last_n: new FormControl(MODEL_PARAMETERS[ModelParameter.repeat_last_n].default, {validators: MODEL_PARAMETERS[ModelParameter.repeat_last_n].validator}),
+        repeat_penalty: new FormControl(MODEL_PARAMETERS[ModelParameter.repeat_penalty].default),
+        seed: new FormControl(MODEL_PARAMETERS[ModelParameter.seed].default, {validators: MODEL_PARAMETERS[ModelParameter.seed].validator}),
+        tfs_z: new FormControl(MODEL_PARAMETERS[ModelParameter.tfs_z].default),
+        mirostat: new FormControl(MODEL_PARAMETERS[ModelParameter.mirostat].default, {validators: MODEL_PARAMETERS[ModelParameter.mirostat].validator}),
+        mirostat_eta: new FormControl(MODEL_PARAMETERS[ModelParameter.mirostat_eta].default),
+        mirostat_tau: new FormControl(MODEL_PARAMETERS[ModelParameter.mirostat_tau].default),
+      }),
+    });
+  }
+
   // <a href="https://github.com/jmorganca/ollama/blob/5b39503bcd6fe7d21ff88caea2173d0ed0823468/docs/modelfile.md#parameter">valid parameters and values</a>
-  chatSettingsGroup = new FormGroup({
-    streaming: new FormControl(true),
-    options: new FormGroup({
-      top_k: new FormControl(MODEL_PARAMETERS[ModelParameter.top_k].default),
-      top_p: new FormControl(MODEL_PARAMETERS[ModelParameter.top_p].default, {validators: MODEL_PARAMETERS[ModelParameter.top_p].validator}),
-      temperature: new FormControl(MODEL_PARAMETERS[ModelParameter.temperature].default, {validators: MODEL_PARAMETERS[ModelParameter.temperature].validator}),
-      stop: new FormArray([new FormControl('')]),
-      num_predict: new FormControl(MODEL_PARAMETERS[ModelParameter.num_predict].default, {validators: MODEL_PARAMETERS[ModelParameter.num_predict].validator}),
-      num_ctx: new FormControl(MODEL_PARAMETERS[ModelParameter.num_ctx].default),
-      num_gqa: new FormControl(),
-      num_gpu: new FormControl(),
-      num_thread: new FormControl(),
-      repeat_last_n: new FormControl(MODEL_PARAMETERS[ModelParameter.repeat_last_n].default, {validators: MODEL_PARAMETERS[ModelParameter.repeat_last_n].validator}),
-      repeat_penalty: new FormControl(MODEL_PARAMETERS[ModelParameter.repeat_penalty].default),
-      seed: new FormControl(MODEL_PARAMETERS[ModelParameter.seed].default, {validators: MODEL_PARAMETERS[ModelParameter.seed].validator}),
-      tfs_z: new FormControl(MODEL_PARAMETERS[ModelParameter.tfs_z].default),
-      mirostat: new FormControl(MODEL_PARAMETERS[ModelParameter.mirostat].default, {validators: MODEL_PARAMETERS[ModelParameter.mirostat].validator}),
-      mirostat_eta: new FormControl(MODEL_PARAMETERS[ModelParameter.mirostat_eta].default),
-      mirostat_tau: new FormControl(MODEL_PARAMETERS[ModelParameter.mirostat_tau].default),
-    }),
-  });
+  chatSettingsGroup = this.default_settings();
 
   get stopControls() {
     return (this.chatSettingsGroup.get('options')?.get('stop') as FormArray)?.controls;
@@ -163,5 +169,9 @@ export class SettingsPopupComponent implements OnInit, OnDestroy {
     };
     // @ts-ignore
     this.saveSettings.emit(settings);
+  }
+
+  cancel() {
+    this.existingSettings = this._existingSettings;
   }
 }

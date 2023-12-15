@@ -86,7 +86,6 @@ export class AppComponent implements OnInit {
     this.chats = this.chatService.loadChats();
     this.route.data.subscribe((data) => {
       if (data['chat']) {
-        console.log(data['chat'])
         this.currentChat = data['chat'];
       } else {
         this.currentChat = this.chats[0] || this.chatService.defaultChat(this.model ?? undefined);
