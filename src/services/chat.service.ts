@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { nanoid } from "nanoid";
+import { ModelOptions } from './ollama-client.service';
 
 export interface Message {
   type: "question" | "answer";
@@ -15,6 +16,10 @@ export interface Chat {
   context: number[];
   chatName: string;
   id?: string;
+  settings?: {
+    streaming: boolean;
+    options: ModelOptions;
+  };
 }
 
 @Injectable({

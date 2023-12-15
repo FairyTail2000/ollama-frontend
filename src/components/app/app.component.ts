@@ -8,12 +8,13 @@ import { SidebarComponent } from "../sidebar/sidebar.component";
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import { SettingsPopupComponent } from '../settings-popup/settings-popup.component';
 
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule, FormsModule, ChatBubbleComponent, SidebarComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, ChatBubbleComponent, SidebarComponent, HeaderComponent, SettingsPopupComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
@@ -24,6 +25,7 @@ export class AppComponent implements OnInit {
   error: string | null = null;
   generating: boolean = false;
   currentSubscriptions: {[key: string]: Subscription} = {};
+  settingsShown: boolean = false;
 
   chats: Chat[] = [];
   _currentChat: Chat | null = null;
@@ -84,6 +86,7 @@ export class AppComponent implements OnInit {
     this.chats = this.chatService.loadChats();
     this.route.data.subscribe((data) => {
       if (data['chat']) {
+        console.log(data['chat'])
         this.currentChat = data['chat'];
       } else {
         this.currentChat = this.chats[0] || this.chatService.defaultChat(this.model ?? undefined);
@@ -115,7 +118,7 @@ export class AppComponent implements OnInit {
       source: this.model!,
       active: true
     });
-    const sub = this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this.system).subscribe((response) => {
+    const sub = this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this.system, this.currentChat!.settings?.options).subscribe((response) => {
       this.generating = true;
       if (Array.isArray(response) && "error" in response[0]) {
         this.error = response[0].error as string;
@@ -165,5 +168,21 @@ export class AppComponent implements OnInit {
       this.generating = false;
       this.chatService.saveChat(this.chats.find((c) => c.id === id!)!);
     }
+  }
+
+  showSettings() {
+    this.settingsShown = true;
+  }
+
+  showModelInfo() {
+    const sub = this.ollamaClient.showModel(this.model!).subscribe((response) => {
+      console.log(response);
+      sub.unsubscribe();
+    });
+  }
+
+  settingsSaved(settings: Chat['settings']) {
+    this.currentChat!.settings = settings;
+    this.chatService.saveChat(this.currentChat!);
   }
 }

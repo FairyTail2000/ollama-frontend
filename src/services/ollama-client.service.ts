@@ -1,6 +1,7 @@
 import {Inject, Injectable, InjectionToken} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {filter, firstValueFrom, map, Observable} from "rxjs";
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 export interface ModelTag {
   modified_at: string
@@ -78,6 +79,102 @@ export interface ModelOptions {
   rope_frequency_base: number
   rope_frequency_scale: number
   num_thread: number
+}
+
+export enum ModelParameter {
+  mirostat = "mirostat",
+  mirostat_eta = "mirostat_eta",
+  mirostat_tau = "mirostat_tau",
+  num_ctx = "num_ctx",
+  num_gqa = "num_gqa",
+  num_gpu = "num_gpu",
+  num_thread = "num_thread",
+  repeat_last_n = "repeat_last_n",
+  repeat_penalty = "repeat_penalty",
+  temperature = "temperature",
+  seed = "seed",
+  stop = "stop",
+  tfs_z = "tfs_z",
+  num_predict = "num_predict",
+  top_k = "top_k",
+  top_p = "top_p",
+}
+
+export const MODEL_PARAMETERS = {
+  [ModelParameter.mirostat]: {
+    type: "int",
+    default: 0,
+    validator: (control: AbstractControl) => {
+      return control.value >= 0 && control.value <= 2 ? null : {invalid: true};
+    }
+  },
+  [ModelParameter.mirostat_eta]: {
+    default: 0.1,
+  },
+  [ModelParameter.mirostat_tau]: {
+    default: 5.0,
+  },
+  [ModelParameter.num_ctx]: {
+    default: 2048,
+  },
+  [ModelParameter.num_gqa]: {
+  },
+  [ModelParameter.num_gpu]: {
+  },
+  [ModelParameter.num_thread]: {
+  },
+  [ModelParameter.repeat_last_n]: {
+    default: 64,
+    validator: (control: AbstractControl) => {
+      return control.value >= -1 ? null : {invalid: true};
+    }
+  },
+  [ModelParameter.repeat_penalty]: {
+    default: 1.1,
+  },
+  [ModelParameter.temperature]: {
+    default: 0.8,
+    validator: (control: AbstractControl) => {
+      return control.value >= 0.0 && control.value <= 1.0 ? null : {invalid: true};
+    }
+  },
+  [ModelParameter.seed]: {
+    default: 0,
+    validator: (control: AbstractControl) => {
+      return control.value >= 0 ? null : {invalid: true};
+    }
+  },
+  [ModelParameter.stop]: {
+    validator: (control: AbstractControl) => {
+      if (control.value !== null && control.value.length !== 0) {
+        for (const stop of control.value) {
+          if (stop.trim().length === 0) {
+            return {invalid: true};
+          }
+        }
+        return null;
+      }
+      return false;
+    }
+  },
+  [ModelParameter.tfs_z]: {
+    default: 1,
+  },
+  [ModelParameter.num_predict]: {
+    default: 128,
+    validator: (control: AbstractControl) => {
+      return control.value >= -2 ? null : {invalid: true};
+    }
+  },
+  [ModelParameter.top_k]: {
+    default: 40
+  },
+  [ModelParameter.top_p]: {
+    default: 0.9,
+    validator: (control: AbstractControl) => {
+      return control.value >= 0.0 && control.value <= 1.0 ? null : {invalid: true};
+    }
+  },
 }
 
 export const API_URL = new InjectionToken<string>('API_URL')

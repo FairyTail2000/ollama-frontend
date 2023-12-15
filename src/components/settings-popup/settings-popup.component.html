@@ -1,0 +1,173 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5" id="settingsModalLabel">Settings</h1>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="chatSettingsGroup">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" formControlName="streaming" id="streaming">
+          <label class="form-check-label" for="streaming">
+            Streaming Mode
+          </label>
+        </div>
+        <div formGroupName="options" class="mt-3">
+          <div formArrayName="stop" class="row mb-3" *ngFor="let stopControl of stopControls; let i = index">
+            <label [for]="'stopInput' + i" class="col-sm-2 col-form-label">Stop</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" [id]="'stopInput' + i" [formControlName]="i">
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" (click)="addStop()">Add Stop</button>
+
+          <div class="row mt-3">
+            <!-- Mirostat -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="mirostatInput" placeholder="0" formControlName="mirostat">
+              <label for="mirostatInput">Mirostat</label>
+              <div
+                *ngIf="mirostat?.invalid && mirostat?.touched"
+                class="invalid-feedback"
+                style="display: block"
+              >
+                <ng-container *ngIf="mirostat?.errors?.['invalid']">Invalid.</ng-container>
+              </div>
+            </div>
+
+            <!-- Mirostat Eta -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="mirostatEtaInput" placeholder="0.1" formControlName="mirostat_eta" step="0.1">
+              <label for="mirostatEtaInput">Mirostat Eta</label>
+            </div>
+
+            <!-- Mirostat Tau -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="mirostatTauInput" placeholder="5.0" formControlName="mirostat_tau" step="0.1">
+              <label for="mirostatTauInput">Mirostat Tau</label>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <!-- Num Ctx -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="numCtxInput" placeholder="2048" formControlName="num_ctx">
+              <label for="numCtxInput">Num Ctx</label>
+            </div>
+
+            <!-- Num Gqa -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="numGqaInput" placeholder="8" formControlName="num_gqa">
+              <label for="numGqaInput">Num Gqa</label>
+            </div>
+
+            <!-- Num Gpu -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="numGpuInput" placeholder="1" formControlName="num_gpu">
+              <label for="numGpuInput">Num Gpu</label>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <!-- Num Thread -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="numThreadInput" placeholder="8" formControlName="num_thread">
+              <label for="numThreadInput">Num Thread</label>
+            </div>
+
+            <!-- Repeat Last N -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="repeatLastNInput" placeholder="64" formControlName="repeat_last_n">
+              <label for="repeatLastNInput">Repeat Last N</label>
+              <div
+                *ngIf="repeat_last_n?.invalid && repeat_last_n?.touched"
+                class="invalid-feedback"
+                style="display: block"
+              >
+                <ng-container *ngIf="repeat_last_n?.errors?.['invalid']">Invalid.</ng-container>
+              </div>
+            </div>
+
+            <!-- Repeat Penalty -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="repeatPenaltyInput" placeholder="1.1" formControlName="repeat_penalty" step="0.1">
+              <label for="repeatPenaltyInput">Repeat Penalty</label>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <!-- Temperature -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="temperatureInput" placeholder="0.8" formControlName="temperature" step="0.1">
+              <label for="temperatureInput">Temperature</label>
+              <div
+                *ngIf="temperature?.invalid && temperature?.touched"
+                class="invalid-feedback"
+                style="display: block"
+              >
+                <ng-container *ngIf="temperature?.errors?.['invalid']">Invalid.</ng-container>
+              </div>
+            </div>
+
+            <!-- Seed -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="seedInput" placeholder="42" formControlName="seed">
+              <label for="seedInput">Seed</label>
+              <div
+                *ngIf="seed?.invalid && seed?.touched"
+                class="invalid-feedback"
+                style="display: block"
+              >
+                <ng-container *ngIf="seed?.errors?.['invalid']">Invalid.</ng-container>
+              </div>
+            </div>
+
+            <!-- Tfs Z -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="tfsZInput" placeholder="1" formControlName="tfs_z">
+              <label for="tfsZInput">Tfs Z</label>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <!-- Num Predict -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="numPredictInput" placeholder="42" formControlName="num_predict">
+              <label for="numPredictInput">Num Predict</label>
+              <div
+                *ngIf="num_predict?.invalid && num_predict?.touched"
+                class="invalid-feedback"
+                style="display: block"
+              >
+                <ng-container *ngIf="num_predict?.errors?.['invalid']">Invalid.</ng-container>
+              </div>
+            </div>
+
+            <!-- Top K -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="topKInput" placeholder="40" formControlName="top_k">
+              <label for="topKInput">Top K</label>
+            </div>
+
+            <!-- Top P -->
+            <div class="form-floating mb-3 col">
+              <input type="number" class="form-control" id="topPInput" placeholder="0.9" formControlName="top_p" step="0.01">
+              <label for="topPInput">Top P</label>
+              <div
+                *ngIf="top_p?.invalid && top_p?.touched"
+                class="invalid-feedback"
+                style="display: block"
+              >
+                <ng-container *ngIf="top_p?.errors?.['invalid']">Invalid.</ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="save()" (keyup.enter)="save()" (keyup.space)="save()">Save</button>
+      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+  </div>
+</div>

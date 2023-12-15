@@ -15,7 +15,9 @@
   </div>
 </div>
 
-<app-header [(model)]="model" [models]="models" (deleteCurrentChat)="deleteCurrentChat()" style="height: 10%; max-height: 10%"/>
+<app-settings-popup (hide)="settingsShown = false" [shown]="settingsShown" (saveSettings)="settingsSaved($event)" [existingSettings]="currentChat?.settings"/>
+
+<app-header [(model)]="model" [models]="models" (deleteCurrentChat)="deleteCurrentChat()" style="height: 10%; max-height: 10%" (settingsClicked)="showSettings()" (modelInfo)="showModelInfo()"/>
 
 <div class="flex-row d-flex" style="height: 90%; max-height: 90%">
   <nav class="w-25 border-end border-2">
@@ -23,9 +25,7 @@
   </nav>
   <main class="justify-content-around flex-column d-flex w-75 mw-100" style="height: 100%; max-height: 100%">
     <div style="padding-top: 20px; padding-bottom: 20px" class="flex-column d-flex h-100 w-100 mh-100 mw-100 overflow-y-auto overflow-x-hidden row-gap-2" #chatcontainer>
-      <ng-container *ngFor="let block of currentChat?.messages">
-        <app-chat-bubble [type]="block.type" [content]="block.content" [source]="block.source" [attr.aria-live]="block.active"></app-chat-bubble>
-      </ng-container>
+      <app-chat-bubble *ngFor="let block of currentChat?.messages" [type]="block.type" [content]="block.content" [source]="block.source" [attr.aria-live]="block.active"></app-chat-bubble>
     </div>
     <form style="display: flex; flex-direction: row; padding-left: 10px; padding-bottom: 10px; padding-right: 10px; justify-content: center" class="mh-25 h-25 w-100 mw-100" (ngSubmit)="ask()">
       <div style="display: flex; flex-direction: row" class="input-group">

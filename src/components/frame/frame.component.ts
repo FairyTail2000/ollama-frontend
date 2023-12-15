@@ -7,7 +7,6 @@ import { RouterOutlet } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterOutlet],
   templateUrl: './frame.component.html',
-  styleUrl: './frame.component.css'
 })
 export class FrameComponent {
 

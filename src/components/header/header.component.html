@@ -13,17 +13,40 @@
     <div class="d-flex justify-content-center">
       Ollama Client
     </div>
-
-    <button
-      class="btn btn-warning d-flex justify-content-end"
-      type="button"
-      tabindex="0"
-      (click)="deleteCurrentChat.emit()"
-      (keyup.enter)="deleteCurrentChat.emit()"
-      (keyup.space)="deleteCurrentChat.emit()"
-      aria-label="Delete current chat"
-      aria-description="Deletes the current chat without confirmation or ability to restore">
-      delete
-    </button>
+    <div class="d-flex align-items-center justify-content-between">
+      <button
+        class="btn btn-primary d-flex justify-content-end"
+        type="button"
+        tabindex="0"
+        (click)="modelInfo.emit()"
+        (keyup.enter)="modelInfo.emit()"
+        (keyup.space)="modelInfo.emit()"
+        aria-label="Current model info"
+        aria-description="Shows information about the currently selected model">
+        <i class="bi bi-info-circle"></i>
+      </button>
+      <button
+        class="btn btn-primary d-flex justify-content-end"
+        type="button"
+        tabindex="0"
+        (click)="settingsClicked.emit()"
+        (keyup.enter)="settingsClicked.emit()"
+        (keyup.space)="settingsClicked.emit()"
+        aria-label="Show Settings Popup"
+        aria-description="Shows the settings popup">
+        <i class="bi bi-gear"></i>
+      </button>
+      <button
+        class="btn btn-warning d-flex justify-content-end"
+        type="button"
+        tabindex="0"
+        (click)="deleteCurrentChat.emit()"
+        (keyup.enter)="deleteCurrentChat.emit()"
+        (keyup.space)="deleteCurrentChat.emit()"
+        aria-label="Delete current chat"
+        aria-description="Deletes the current chat without confirmation or ability to restore">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
   </nav>
 </header>

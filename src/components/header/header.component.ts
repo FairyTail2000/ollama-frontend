@@ -15,4 +15,6 @@ export class HeaderComponent {
   @Input({required: true}) models: ModelTag[] = [];
 
   @Output() deleteCurrentChat = new EventEmitter<void>();
+  @Output() settingsClicked = new EventEmitter<void>();
+  @Output() modelInfo = new EventEmitter<void>();
 }
