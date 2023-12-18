@@ -1,7 +1,8 @@
 import {Inject, Injectable, InjectionToken} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {filter, firstValueFrom, map, Observable} from "rxjs";
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
+import { Chat } from './chat.service';
 
 export interface ModelTag {
   modified_at: string
@@ -34,11 +35,40 @@ export interface QuestionResponseEnd {
   total_duration: number
 }
 
+export interface ChatResponse {
+  model: string
+  created_at: string
+  message: {
+    role: "assisant",
+    content: string
+  },
+  done: boolean
+}
+
+export interface ChatResponseEnd {
+  model: string
+  created_at: string
+  done: boolean
+  total_duration: number
+  load_duration: number
+  prompt_eval_count: number
+  prompt_eval_duration: number
+  eval_count: number
+  eval_duration: number
+}
+
 export interface ShowModelResponse {
   license: string
   modelfile: string
   parameters: string
   template: string
+  details?: {
+    families: string[]
+    family: string
+    format: string
+    parameter_size: string
+    quantization_level: string
+  }
 }
 
 export interface EmbeddingResponse {
@@ -194,13 +224,41 @@ export class OllamaClientService {
     return await firstValueFrom(this.http.get<ModelTagListResponse>(`${this.api_url}/tags`, {responseType: "json"}));
   }
 
-  async getModelInfo(model: ModelTag) {
-    return await firstValueFrom(this.http.post<any>(`${this.api_url}/show`, {name: model.name}, {responseType: "json"}));
-  }
-
-  askQuestion(model: string, prompt: string, context: number[] = [], system?: string, options?: ModelOptions): Observable<(QuestionResponse | QuestionResponseEnd)[]> {
+  askQuestionWithContext(model: string, prompt: string, context: number[] = [], system?: string, options?: ModelOptions): Observable<(QuestionResponse | QuestionResponseEnd)[]> {
     return this.http.post(`${this.api_url}/generate`,
       {model, prompt, context, system: system?.trim().length !== 0 ? system : undefined, options},
+      {observe: 'events', responseType: 'text', reportProgress: true}
+    ).pipe(
+      // @ts-ignore
+      filter(e => e.type === 3),
+      map(e => {
+        // @ts-ignore
+        const partials = e.partialText.trim().split('\n');
+        return partials.map((p: string) => JSON.parse(p));
+      })
+    );
+  }
+
+  askChatQuestion(chat: Chat): Observable<(ChatResponse | ChatResponseEnd)[]> {
+    const messages = chat.messages.map(m => {
+      if (m.type === "question") {
+        return {
+          role: "user",
+          content: m.content
+        };
+      } else {
+        return {
+          role: "assistant",
+          content: m.content
+        }
+      }
+    });
+    if (messages.at(-1)?.role === "assistant") {
+      messages.pop();
+    }
+
+    return this.http.post(`${this.api_url}/chat`,
+      {model: chat.model, messages, system: chat.system?.trim().length !== 0 ? chat.system : undefined, options: {...chat.settings}},
       {observe: 'events', responseType: 'text', reportProgress: true}
     ).pipe(
       // @ts-ignore

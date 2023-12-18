@@ -117,7 +117,32 @@ export class AppComponent implements OnInit {
       source: this.model!,
       active: true
     });
-    const sub = this.ollamaClient.askQuestion(this.currentChat!.model, this.question, this.currentChat!.context, this.system, this.currentChat!.settings?.options).subscribe((response) => {
+
+    const sub = this.ollamaClient.askChatQuestion(this.currentChat!).subscribe((response) => {
+      this.generating = true;
+      if (Array.isArray(response) && "error" in response[0]) {
+        this.error = response[0].error as string;
+        new bootstrap.Modal(this.modal?.nativeElement!).show();
+        this.currentChat!.messages.pop();
+        this.generating = false;
+        this.chatService.saveChat(this.currentChat!);
+      } else {
+        this.currentChat!.messages[this.currentChat!.messages.length - 1].content = "";
+        for (const r of response) {
+          if ("message" in r) {
+            this.currentChat!.messages[this.currentChat!.messages.length - 1].content += r.message.content;
+          }
+          if (r.done) {
+            this.currentChat!.messages[this.currentChat!.messages.length - 1].active = false;
+            this.generating = false;
+            this.chatService.saveChat(this.currentChat!);
+          }
+          this.chatcontainer?.nativeElement.scrollTo(0, this.chatcontainer.nativeElement.scrollHeight);
+        }
+      }
+    });
+
+    /*const sub = this.ollamaClient.askQuestionWithContext(this.currentChat!.model, this.question, this.currentChat!.context, this.system, this.currentChat!.settings?.options).subscribe((response) => {
       this.generating = true;
       if (Array.isArray(response) && "error" in response[0]) {
         this.error = response[0].error as string;
@@ -140,7 +165,7 @@ export class AppComponent implements OnInit {
           this.chatcontainer?.nativeElement.scrollTo(0, this.chatcontainer.nativeElement.scrollHeight);
         }
       }
-    });
+    });*/
     this.currentSubscriptions[this.currentChat!.id!] = sub;
     this.question = "";
   }
