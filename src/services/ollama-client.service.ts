@@ -258,7 +258,7 @@ export class OllamaClientService {
     }
 
     return this.http.post(`${this.api_url}/chat`,
-      {model: chat.model, messages, system: chat.system?.trim().length !== 0 ? chat.system : undefined, options: {...chat.settings}},
+      {model: chat.model, messages, system: chat.system?.trim().length !== 0 ? chat.system : undefined, options: {...chat.settings?.options}, stream: chat.settings?.streaming ?? true},
       {observe: 'events', responseType: 'text', reportProgress: true}
     ).pipe(
       // @ts-ignore
